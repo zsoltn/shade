@@ -20,3 +20,4 @@ keystoneauth1>=3.3.0 # Apache-2.0
 netifaces>=0.10.4 # MIT
 
 dogpile.cache>=0.6.2 # BSD
+xlwt>=1.2.1
