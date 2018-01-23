@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)http://visjs.org/examples/network/nodeStyles/images.html -->
+<html><script id="tinyhippos-injected">if (window.top.ripple) { window.top.ripple("bootstrap").inject(window, document); }</script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Network | Images</title>
+
+  <style type="text/css">
+	body {
+            font: 10pt sans;
+        }  
+    #mynetwork {
+      width: 1024px;
+      height: 768px;
+      border: 1px solid lightgray;
+	  background-color:#ffffff
+    }
+  {% include 'vis-network.min.css' %}      
+  </style>
+
+  {% for key, value in file_list.iteritems() %}  
+        <dt>{{ key }}</dt>
+        <dd>{{ value  }}</dd>
+  {% endfor %}
+      
+
+  <script type="text/javascript">
+/* <!--  */    
+	{% include 'vis.min.js' %}
+/* --> */
+	  
+  </script>  
+  <script type="text/javascript">
+    var nodes = null;
+    var edges = null;
+    var network = null;
+
+    var DIR = 'img/';
+    var EDGE_LENGTH_MAIN = 150;
+    var EDGE_LENGTH_SUB = 100;
+
+    // Called when the Visualization API is loaded.
+    function draw() {
+      // Create a data table with nodes.
+      nodes = [];
+
+      // Create a data table with links.
+      edges = [];
+
+	  
+	  nodes.push({id: 104, label: 'Internet', image: '{{ file_list["System-Firewall-3-icon.png"] }}', shape: 'image'}); //,fixed: true,  physics:false NOT MOVABLE AFTER IT
+	  
+      nodes.push({id: 1, label: 'vpc_default', image: DIR + 'Network-Pipe-icon.png', shape: 'image'});
+      nodes.push({id: 80, label: 'subnet_admin', image: DIR + 'Network-Pipe-icon.png', shape: 'image'});
+
+      nodes.push({id: 2, label: 'subnet_web_public', image: DIR + 'Network-Pipe-icon.png', shape: 'image'});
+      nodes.push({id: 3, label: 'subnet_db_cassandra', image: DIR + 'Network-Pipe-icon.png', shape: 'image'});
+      edges.push({from: 1, to: 2, length: EDGE_LENGTH_MAIN});
+      edges.push({from: 1, to: 3, length: EDGE_LENGTH_MAIN});
+
+      for (var i = 4; i <= 5; i++) {
+        nodes.push({id: i, label: 'nginx' +i+'\n(16G 16vCPU)' , image: DIR + 'Hardware-My-Computer-3-icon.png', shape: 'image', hover:{label: 'aaaa',background:'black',border:'red'}  });
+        edges.push({from: 2, to: i, length: EDGE_LENGTH_SUB});
+		edges.push({from: i, to: 104, length: EDGE_LENGTH_SUB*2,width: 2 * 2, label: 'EIP: (80.11.11.22)\nBW(300 mbps)'});
+      }
+
+	  
+	  
+	  
+	  
+      nodes.push({id: 101, label: 'Printer \nServer', image: DIR + 'Hardware-Printer-Blue-icon.png', shape: 'image'});
+      edges.push({from: 2, to: 101, length: EDGE_LENGTH_SUB});
+
+      nodes.push({id: 102, label: 'Workstation', image: DIR + 'Hardware-Laptop-1-icon.png', shape: 'image'});
+      edges.push({from: 3, to: 102, length: EDGE_LENGTH_SUB});
+
+      nodes.push({id: 103, label: 'network drive\nSize:30G\n Type: SSD', image: DIR + 'Network-Drive-icon.png', shape: 'image'});
+      edges.push({from: 1, to: 103, length: EDGE_LENGTH_SUB});
+
+      nodes.push({id: 105, label: 'network drive\nSize:30G\n Type: SSD', shape: 'database'});
+      edges.push({from: 1, to: 105, length: EDGE_LENGTH_SUB});
+
+	  
+      //edges.push({from: 1, to: 2, length: LENGTH_MAIN, width: WIDTH_SCALE * 6, label: '0.71 mbps'});
+      //edges.push({from: 1, to: 3, length: LENGTH_MAIN, width: WIDTH_SCALE * 4, label: '0.55 mbps'});
+	  
+	  
+      
+
+      for (var i = 200; i <= 205; i++ ) {
+        nodes.push({id: i, label: 'cassandra_'+i, image: DIR + 'db.jpg', shape: 'circularImage'});
+        edges.push({from: 3, to: i, length: EDGE_LENGTH_SUB*2,  label: 'IP:192.168.0.'+i});
+        edges.push({from: 80, to: i, length: EDGE_LENGTH_SUB*2});
+      }
+
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var data = {
+        nodes: nodes,
+        edges: edges
+      };
+
+var options = {
+  autoResize: true,
+  layout: {
+      randomSeed: 0,
+      improvedLayout:true,
+      //hierarchical: { direction: "UD"},	  //Left-Right
+	  },       // defined in the layout module.
+  edges: {
+            smooth: {
+            type: 'cubicBezier',
+            forceDirection: 'horizontal', // 'vertical'
+            roundness: 0.5
+            }
+         },	  
+	tooltip: {
+		delay: 200,
+		fontSize: 12,
+		color: {
+			background: "#fff"
+		},
+	},
+  physics: {barnesHut: {centralGravity: 0.1}}, //smoothCurves: false,
+		 
+   interaction: {hover: true}				
+};	  
+	  
+      network = new vis.Network(container, data, options);
+    }
+  </script>
+  
+
+</head><body onload="draw()">
+
+<p>
+  Display nodes as images.
+</p>
+<div id="mynetwork"><div class="vis-network" tabindex="900" style="position: relative; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"><canvas width="1024" height="768" style="position: relative; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"></canvas></div></div>
+
+
+
+</body></html>
